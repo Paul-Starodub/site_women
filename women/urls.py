@@ -1,6 +1,10 @@
-from django.urls import path, re_path
+from django.urls import path, register_converter
 
 from women import views
+from women import convertors
+
+
+register_converter(convertors.FourDigitYearConverter, "year4")
 
 urlpatterns = [
     path("", views.index, name="women"),
@@ -10,7 +14,7 @@ urlpatterns = [
         views.categories_by_slug,
         name="category_by_slug",
     ),
-    re_path(r"archive/(?P<year>[0-9]{4}/)", views.archive, name="archive"),
+    path("archive/<year4:year>/", views.archive, name="archive"),
 ]
 
 app_name = "women"

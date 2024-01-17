@@ -1,4 +1,9 @@
-from django.http import HttpRequest, HttpResponse, HttpResponseNotFound
+from django.http import (
+    HttpRequest,
+    HttpResponse,
+    HttpResponseNotFound,
+    Http404,
+)
 
 
 def index(request: HttpRequest) -> HttpResponse:
@@ -14,6 +19,8 @@ def categories_by_slug(request: HttpRequest, cat_slug: int) -> HttpResponse:
 
 
 def archive(request: HttpRequest, year: int) -> HttpResponse:
+    if year > 2024:
+        raise Http404("Year")
     return HttpResponse(f"<h2>Category year:{year}</h2>")
 
 

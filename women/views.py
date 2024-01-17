@@ -1,4 +1,4 @@
-from django.http import HttpRequest, HttpResponse
+from django.http import HttpRequest, HttpResponse, HttpResponseNotFound
 
 
 def index(request: HttpRequest) -> HttpResponse:
@@ -15,3 +15,9 @@ def categories_by_slug(request: HttpRequest, cat_slug: int) -> HttpResponse:
 
 def archive(request: HttpRequest, year: int) -> HttpResponse:
     return HttpResponse(f"<h2>Category year:{year}</h2>")
+
+
+def page_not_found(
+    request: HttpRequest, exception: Exception
+) -> HttpResponseNotFound:
+    return HttpResponseNotFound("Page not found!!!")

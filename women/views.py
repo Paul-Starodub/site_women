@@ -2,8 +2,8 @@ from django.http import (
     HttpRequest,
     HttpResponse,
     HttpResponseNotFound,
+    HttpResponseRedirect,
 )
-from django.shortcuts import redirect
 from django.urls import reverse
 
 
@@ -21,11 +21,8 @@ def categories_by_slug(request: HttpRequest, cat_slug: int) -> HttpResponse:
 
 def archive(request: HttpRequest, year: int) -> HttpResponse:
     if year > 2024:
-        # return redirect("/")  # 302
-        # return redirect("/", permanent=True)  # 301
-        # return redirect("women:women")  # another case
         uri = reverse("women:category_by_slug", args=("music",))
-        return redirect(uri)
+        return HttpResponseRedirect(uri)
     return HttpResponse(f"<h2>Category year:{year}</h2>")
 
 

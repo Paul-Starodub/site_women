@@ -1,3 +1,10 @@
+from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render
 
-# Create your views here.
+
+def index(request: HttpRequest) -> HttpResponse:
+    return HttpResponse("Women's page")
+
+
+def categories(request: HttpRequest) -> HttpResponse:
+    return HttpResponse("<h2>categories</h2>")

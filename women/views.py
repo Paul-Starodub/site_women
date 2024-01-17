@@ -1,8 +1,19 @@
-from django.http import HttpRequest, HttpResponse
+from django.http import (
+    HttpRequest,
+    HttpResponse,
+    HttpResponseNotFound,
+    HttpResponseRedirect,
+)
+from django.shortcuts import render
+from django.urls import reverse
 
 
 def index(request: HttpRequest) -> HttpResponse:
-    return HttpResponse("Women's page")
+    return render(request, "women/index.html")
+
+
+def about(request: HttpRequest) -> HttpResponse:
+    return render(request, "women/about.html")
 
 
 def categories(request: HttpRequest, cat_id: int) -> HttpResponse:
@@ -14,4 +25,13 @@ def categories_by_slug(request: HttpRequest, cat_slug: int) -> HttpResponse:
 
 
 def archive(request: HttpRequest, year: int) -> HttpResponse:
+    if year > 2024:
+        uri = reverse("women:category_by_slug", args=("music",))
+        return HttpResponseRedirect(uri)
     return HttpResponse(f"<h2>Category year:{year}</h2>")
+
+
+def page_not_found(
+    request: HttpRequest, exception: Exception
+) -> HttpResponseNotFound:
+    return HttpResponseNotFound("Page not found!!!")

@@ -5,10 +5,12 @@ from django.http import (
     HttpResponseRedirect,
 )
 from django.urls import reverse
+from django.template.loader import render_to_string
 
 
 def index(request: HttpRequest) -> HttpResponse:
-    return HttpResponse("Women's page")
+    t = render_to_string("women/index.html")
+    return HttpResponse(t)
 
 
 def categories(request: HttpRequest, cat_id: int) -> HttpResponse:

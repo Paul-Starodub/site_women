@@ -8,8 +8,25 @@ from django.shortcuts import render
 from django.urls import reverse
 
 
+menu = ["about site", "add article", "feedback", "enter"]
+
+
+class MyClass:
+    def __init__(self, a: int, b: int) -> None:
+        self.a = a
+        self.b = b
+
+
 def index(request: HttpRequest) -> HttpResponse:
-    data = {"title": "Women"}
+    data = {
+        "title": "Women",
+        "menu": menu,
+        "float": 28.56,
+        "lst": [1, 2, "abc", True],
+        "set": {1, 2, 3, 2, 5},
+        "dict": {"key_1": "value_1", "key_2": "value_2"},
+        "obj": MyClass(10, 20),
+    }
     return render(request, "women/index.html", context=data)
 
 

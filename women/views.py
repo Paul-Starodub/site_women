@@ -9,11 +9,12 @@ from django.urls import reverse
 
 
 def index(request: HttpRequest) -> HttpResponse:
-    return render(request, "women/index.html")
+    data = {"title": "Women"}
+    return render(request, "women/index.html", context=data)
 
 
 def about(request: HttpRequest) -> HttpResponse:
-    return render(request, "women/about.html")
+    return render(request, "women/about.html", context={"title": "About site"})
 
 
 def categories(request: HttpRequest, cat_id: int) -> HttpResponse:

@@ -1,26 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>{{ title }}</title>
-</head>
-<body>
-   <ul>
-      <li>
-         <a href="{% url 'women:home' %}">Main page</a>
-      </li>
-      {% for m in menu %}
-         {% if not forloop.last %}
-            <li>
-         {% else %}
-            <li class="last-related">
-         {% endif %}
-               <a href="{% url m.url_name %}">{{ m.title }}</a>
-            </li>
-      {% endfor %}
-   </ul>
+{%  extends 'base.html' %}
+
+{% block content %}
    <h1>{{ title }}</h1>
-   <ul>
+     <ul>
       {% for p in posts %}
          <li>
             <h2>{{ p.title }}</h2>
@@ -32,5 +14,4 @@
          </li>
       {% endfor %}
    </ul>
-</body>
-</html>
+{% endblock %}

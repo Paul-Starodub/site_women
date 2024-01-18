@@ -12,7 +12,9 @@
          <li>
          <h2>{{ p.title }}</h2>
          <p>{{ p.content }}</p>
-         <hr>
+         {% if not forloop.last %}
+           <hr>
+         {% endif %}
          </li>
       {% endfor %}
    </ul>

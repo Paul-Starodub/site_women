@@ -2,33 +2,71 @@ from django.http import (
     HttpRequest,
     HttpResponse,
     HttpResponseNotFound,
-    HttpResponseRedirect,
 )
 from django.shortcuts import render
-from django.urls import reverse
+
+
+menu = [
+    {"title": "About site", "url_name": "women:about"},
+    {"title": "Add an article", "url_name": "women:add_page"},
+    {"title": "Feedback", "url_name": "women:contact"},
+    {"title": "Enter", "url_name": "women:login"},
+]
+
+
+data_db = [
+    {
+        "id": 1,
+        "title": "Angelina Joly",
+        "content": "Angelina's biography",
+        "is_published": True,
+    },
+    {
+        "id": 2,
+        "title": "Margo Robby",
+        "content": "Margo's biography",
+        "is_published": False,
+    },
+    {
+        "id": 3,
+        "title": "July Roberts",
+        "content": "July's biography",
+        "is_published": True,
+    },
+]
 
 
 def index(request: HttpRequest) -> HttpResponse:
-    return render(request, "women/index.html")
+    data = {
+        "title": "women",
+        "menu": menu,
+        "posts": data_db,
+    }
+    return render(request, "women/index.html", context=data)
 
 
 def about(request: HttpRequest) -> HttpResponse:
-    return render(request, "women/about.html")
+    return render(
+        request,
+        "women/about.html",
+        context={"title": "About site", "menu": menu},
+    )
 
 
-def categories(request: HttpRequest, cat_id: int) -> HttpResponse:
-    return HttpResponse(f"<h2>Category id:{cat_id}</h2>")
+def show_post(request: HttpRequest, post_id: int) -> HttpResponse:
+    return HttpResponse(f"Displaying an article with id = {post_id}")
 
 
-def categories_by_slug(request: HttpRequest, cat_slug: int) -> HttpResponse:
-    return HttpResponse(f"<h2>Category slug:{cat_slug}</h2>")
+def addpage(request: HttpRequest) -> HttpResponse:
+    return HttpResponse("Adding an article")
 
 
-def archive(request: HttpRequest, year: int) -> HttpResponse:
-    if year > 2024:
-        uri = reverse("women:category_by_slug", args=("music",))
-        return HttpResponseRedirect(uri)
-    return HttpResponse(f"<h2>Category year:{year}</h2>")
+def contact(request: HttpRequest) -> HttpResponse:
+    return HttpResponse("Feedback")
+
+
+def login(request: HttpRequest) -> HttpResponse:
+    return HttpResponse("Authorization")
 
 
 def page_not_found(

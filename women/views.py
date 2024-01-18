@@ -2,13 +2,16 @@ from django.http import (
     HttpRequest,
     HttpResponse,
     HttpResponseNotFound,
-    HttpResponseRedirect,
 )
 from django.shortcuts import render
-from django.urls import reverse
 
 
-menu = ["about site", "add article", "feedback", "enter"]
+menu = [
+    {"title": "About site", "url_name": "women:about"},
+    {"title": "Add an article", "url_name": "women:add_page"},
+    {"title": "Feedback", "url_name": "women:contact"},
+    {"title": "Enter", "url_name": "women:login"},
+]
 
 
 data_db = [
@@ -46,19 +49,20 @@ def about(request: HttpRequest) -> HttpResponse:
     return render(request, "women/about.html", context={"title": "About site"})
 
 
-def categories(request: HttpRequest, cat_id: int) -> HttpResponse:
-    return HttpResponse(f"<h2>Category id:{cat_id}</h2>")
+def show_post(request: HttpRequest, post_id: int) -> HttpResponse:
+    return HttpResponse(f"Displaying an article with id = {post_id}")
 
 
-def categories_by_slug(request: HttpRequest, cat_slug: int) -> HttpResponse:
-    return HttpResponse(f"<h2>Category slug:{cat_slug}</h2>")
+def addpage(request: HttpRequest) -> HttpResponse:
+    return HttpResponse("Adding an article")
 
 
-def archive(request: HttpRequest, year: int) -> HttpResponse:
-    if year > 2024:
-        uri = reverse("women:category_by_slug", args=("music",))
-        return HttpResponseRedirect(uri)
-    return HttpResponse(f"<h2>Category year:{year}</h2>")
+def contact(request: HttpRequest) -> HttpResponse:
+    return HttpResponse("Feedback")
+
+
+def login(request: HttpRequest) -> HttpResponse:
+    return HttpResponse("Authorization")
 
 
 def page_not_found(

@@ -12,6 +12,7 @@
          <li>
          <h2>{{ p.title }}</h2>
          <p>{{ p.content }}</p>
+         <p><a href="post/{{ p.id }}">Read post</a></p>
          {% if not forloop.last %}
            <hr>
          {% endif %}

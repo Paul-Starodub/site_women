@@ -2,14 +2,20 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>{{ title}}</title>
+  <title>{{ main_title|default:"Without"}}</title>
 </head>
 <body>
-  <p>{{ menu }}</p>
-  <p>{{ float }}</p>
-  <p>{{ lst }}</p>
+  <p>{{ menu|first }}</p>
+  <p>{{ menu|last }}</p>
+  <p>{{ menu|join:" | " }}</p>
+  <p>{{ float|add:"50" }}</p>
+  <p>{{ float|divisibleby:"2" }}</p>
+  <p>{{ lst|length }}</p>
   <p>{{ set }}</p>
   <p>{{ dict.key_1 }}</p>
- <h1>{{ obj.a }}</h1>
+  <p>{{ "The main page"|slugify }}</p>
+  <p>{{ obj.a }}</p>
+ <h1>{{ title|capfirst }}</h1>
+ <h1>{{ title|cut:" "|cut:"?" }}</h1>
 </body>
 </html>

@@ -19,7 +19,7 @@ class MyClass:
 
 def index(request: HttpRequest) -> HttpResponse:
     data = {
-        "title": "Women",
+        "title": "women",
         "menu": menu,
         "float": 28.56,
         "lst": [1, 2, "abc", True],

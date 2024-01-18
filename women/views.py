@@ -6,6 +6,7 @@ from django.http import (
 )
 from django.shortcuts import render
 from django.urls import reverse
+from django.template.defaultfilters import slugify
 
 
 menu = ["about site", "add article", "feedback", "enter"]
@@ -26,6 +27,7 @@ def index(request: HttpRequest) -> HttpResponse:
         "set": {1, 2, 3, 2, 5},
         "dict": {"key_1": "value_1", "key_2": "value_2"},
         "obj": MyClass(10, 20),
+        "url": slugify("The second page"),
     }
     return render(request, "women/index.html", context=data)
 

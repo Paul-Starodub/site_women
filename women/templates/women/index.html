@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>{{ main_title|default:"Without"}}</title>
+  <title>{{ title }}</title>
 </head>
 <body>
   <p>{{ menu|first }}</p>
@@ -15,6 +15,7 @@
   <p>{{ dict.key_1 }}</p>
   <p>{{ "The main page"|slugify }}</p>
   <p>{{ obj.a }}</p>
+  <p>{{ url }}</p>
  <h1>{{ title|capfirst }}</h1>
  <h1>{{ title|cut:" "|cut:"?" }}</h1>
 </body>

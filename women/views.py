@@ -6,28 +6,38 @@ from django.http import (
 )
 from django.shortcuts import render
 from django.urls import reverse
-from django.template.defaultfilters import slugify
 
 
 menu = ["about site", "add article", "feedback", "enter"]
 
 
-class MyClass:
-    def __init__(self, a: int, b: int) -> None:
-        self.a = a
-        self.b = b
+data_db = [
+    {
+        "id": 1,
+        "title": "Angelina Joly",
+        "content": "Angelina's biography",
+        "is_published": True,
+    },
+    {
+        "id": 2,
+        "title": "Margo Robby",
+        "content": "Margo's biography",
+        "is_published": False,
+    },
+    {
+        "id": 3,
+        "title": "July Roberts",
+        "content": "July's biography",
+        "is_published": True,
+    },
+]
 
 
 def index(request: HttpRequest) -> HttpResponse:
     data = {
         "title": "women",
         "menu": menu,
-        "float": 28.56,
-        "lst": [1, 2, "abc", True],
-        "set": {1, 2, 3, 2, 5},
-        "dict": {"key_1": "value_1", "key_2": "value_2"},
-        "obj": MyClass(10, 20),
-        "url": slugify("The second page"),
+        "posts": data_db,
     }
     return render(request, "women/index.html", context=data)
 

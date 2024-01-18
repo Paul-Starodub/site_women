@@ -85,6 +85,10 @@ def login(request: HttpRequest) -> HttpResponse:
     return HttpResponse("Authorization")
 
 
+def show_category(request: HttpRequest, cat_id: int) -> HttpResponse:
+    return index(request)
+
+
 def page_not_found(
     request: HttpRequest, exception: Exception
 ) -> HttpResponseNotFound:

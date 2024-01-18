@@ -30,11 +30,8 @@
 <tr>
 	<td valign="top" class="left-chapters">
 	<ul id="leftchapters">
-    {% get_categories  as categories %}
 		<li class="selected">All categories</li>
-    {% for cat in categories %}
-      <li><a href="{% url 'women:category' cat.id %}">{{ cat.name }}</a></li>
-    {% endfor %}
+    {% show_categories %}
 		<li class="share">
 		<p>Our channel</p>
 		<a class="share-yt" href="https://www.youtube.com/channel/UCkMWrirEKmuLdjK1MkXj5Hg" target="_blank" rel="nofollow"></a>

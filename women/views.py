@@ -17,8 +17,9 @@ menu = [
 data_db = [
     {
         "id": 1,
-        "title": "Angelina Joly",
-        "content": "Angelina's biography",
+        "title": "Angelina Jolie",
+        "content": """Angelina Jolie</h1> (born Angelina Jolie [7], born Voight, formerly Jolie Pitt; born June 4, 1975, Los Angeles, California, USA) - American film, television and voice actress, film director, screenwriter, producer, fashion model, UN Goodwill Ambassador.
+     Winner of an Oscar, three Golden Globe awards (the first actress in history to win the award three years in a row) and two Screen Actors Guild Awards.""",
         "is_published": True,
     },
     {

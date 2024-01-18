@@ -12,6 +12,6 @@ def get_categories() -> List[Any]:
 
 
 @register.inclusion_tag("women/list_categories.html")
-def show_categories() -> dict:
+def show_categories(cat_selected: int = 0) -> dict:
     cats_db = views.cats_db
-    return {"cats": cats_db}
+    return {"cats": cats_db, "cat_selected": cat_selected}

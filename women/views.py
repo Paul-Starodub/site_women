@@ -17,8 +17,9 @@ menu = [
 data_db = [
     {
         "id": 1,
-        "title": "Angelina Joly",
-        "content": "Angelina's biography",
+        "title": "Angelina Jolie",
+        "content": """Angelina Jolie</h1> (born Angelina Jolie [7], born Voight, formerly Jolie Pitt; born June 4, 1975, Los Angeles, California, USA) - American film, television and voice actress, film director, screenwriter, producer, fashion model, UN Goodwill Ambassador.
+     Winner of an Oscar, three Golden Globe awards (the first actress in history to win the award three years in a row) and two Screen Actors Guild Awards.""",
         "is_published": True,
     },
     {
@@ -35,12 +36,28 @@ data_db = [
     },
 ]
 
+cats_db = [
+    {
+        "id": 1,
+        "name": "actresses",
+    },
+    {
+        "id": 2,
+        "name": "singers",
+    },
+    {
+        "id": 3,
+        "name": "female athletes",
+    },
+]
+
 
 def index(request: HttpRequest) -> HttpResponse:
     data = {
         "title": "women",
         "menu": menu,
         "posts": data_db,
+        "cat_selected": 0,
     }
     return render(request, "women/index.html", context=data)
 
@@ -67,6 +84,16 @@ def contact(request: HttpRequest) -> HttpResponse:
 
 def login(request: HttpRequest) -> HttpResponse:
     return HttpResponse("Authorization")
+
+
+def show_category(request: HttpRequest, cat_id: int) -> HttpResponse:
+    data = {
+        "title": "Displaying categories",
+        "menu": menu,
+        "posts": data_db,
+        "cat_selected": cat_id,
+    }
+    return render(request, "women/index.html", context=data)
 
 
 def page_not_found(

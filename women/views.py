@@ -36,6 +36,21 @@ data_db = [
     },
 ]
 
+cats_db = [
+    {
+        "id": 1,
+        "name": "actresses",
+    },
+    {
+        "id": 2,
+        "name": "singers",
+    },
+    {
+        "id": 3,
+        "name": "female athletes",
+    },
+]
+
 
 def index(request: HttpRequest) -> HttpResponse:
     data = {

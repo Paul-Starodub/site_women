@@ -71,8 +71,8 @@ def about(request: HttpRequest) -> HttpResponse:
     )
 
 
-def show_post(request: HttpRequest, post_id: int) -> HttpResponse:
-    post = get_object_or_404(Women, pk=post_id)
+def show_post(request: HttpRequest, post_slug: str) -> HttpResponse:
+    post = get_object_or_404(Women, slug=post_slug)
     data = {"title": post.title, "menu": menu, "post": post, "cat_selected": 1}
     return render(request, "women/post.html", context=data)
 

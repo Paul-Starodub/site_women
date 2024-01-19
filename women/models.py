@@ -1,5 +1,11 @@
 from django.db import models
+from django.db.models import QuerySet
 from django.urls import reverse
+
+
+class PublishedManager(models.Manager):
+    def get_queryset(self) -> QuerySet:
+        return super().get_queryset().filter(is_published=True)
 
 
 class Women(models.Model):
@@ -9,6 +15,9 @@ class Women(models.Model):
     time_create = models.DateTimeField(auto_now_add=True)
     time_update = models.DateTimeField(auto_now=True)
     is_published = models.BooleanField(default=True)
+
+    objects = models.Manager()
+    published = PublishedManager()
 
     def __str__(self) -> str:
         return self.title

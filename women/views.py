@@ -3,7 +3,8 @@ from django.http import (
     HttpResponse,
     HttpResponseNotFound,
 )
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
+from women.models import Women
 
 
 menu = [
@@ -71,7 +72,9 @@ def about(request: HttpRequest) -> HttpResponse:
 
 
 def show_post(request: HttpRequest, post_id: int) -> HttpResponse:
-    return HttpResponse(f"Displaying an article with id = {post_id}")
+    post = get_object_or_404(Women, pk=post_id)
+    data = {"title": post.title, "menu": menu, "post": post, "cat_selected": 1}
+    return render(request, "women/post.html", context=data)
 
 
 def addpage(request: HttpRequest) -> HttpResponse:

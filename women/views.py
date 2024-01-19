@@ -54,10 +54,11 @@ cats_db = [
 
 
 def index(request: HttpRequest) -> HttpResponse:
+    posts = Women.objects.filter(is_published=1)
     data = {
         "title": "women",
         "menu": menu,
-        "posts": data_db,
+        "posts": posts,
         "cat_selected": 0,
     }
     return render(request, "women/index.html", context=data)

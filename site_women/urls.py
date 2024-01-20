@@ -20,6 +20,10 @@ from django.urls import path, include
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("", include("women.urls", namespace="women")),
+    path("__debug__/", include("debug_toolbar.urls")),
 ]
 
 handler404 = "women.views.page_not_found"
+
+admin.site.site_header = "My site administration"
+admin.site.index_title = "Famous women"

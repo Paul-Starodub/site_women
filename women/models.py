@@ -42,6 +42,8 @@ class Women(models.Model):
         return self.title
 
     class Meta:
+        verbose_name = "Famous woman"
+        verbose_name_plural = "Famous women"
         ordering = ["-time_create"]
         indexes = [models.Index(fields=["-time_create"])]
 

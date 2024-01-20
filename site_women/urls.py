@@ -24,3 +24,6 @@ urlpatterns = [
 ]
 
 handler404 = "women.views.page_not_found"
+
+admin.site.site_header = "My site administration"
+admin.site.index_title = "Famous women"

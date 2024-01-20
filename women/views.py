@@ -14,31 +14,8 @@ menu = [
 ]
 
 
-data_db = [
-    {
-        "id": 1,
-        "title": "Angelina Jolie",
-        "content": """Angelina Jolie</h1> (born Angelina Jolie [7], born Voight, formerly Jolie Pitt; born June 4, 1975, Los Angeles, California, USA) - American film, television and voice actress, film director, screenwriter, producer, fashion model, UN Goodwill Ambassador.
-     Winner of an Oscar, three Golden Globe awards (the first actress in history to win the award three years in a row) and two Screen Actors Guild Awards.""",
-        "is_published": True,
-    },
-    {
-        "id": 2,
-        "title": "Margo Robby",
-        "content": "Margo's biography",
-        "is_published": False,
-    },
-    {
-        "id": 3,
-        "title": "July Roberts",
-        "content": "July's biography",
-        "is_published": True,
-    },
-]
-
-
 def index(request: HttpRequest) -> HttpResponse:
-    posts = Women.published.all()
+    posts = Women.published.select_related("cat")
     data = {
         "title": "women",
         "menu": menu,
@@ -76,7 +53,7 @@ def login(request: HttpRequest) -> HttpResponse:
 
 def show_category(request: HttpRequest, cat_slug: str) -> HttpResponse:
     category = get_object_or_404(Category, slug=cat_slug)
-    posts = Women.published.filter(cat_id=category.pk)
+    posts = Women.published.filter(cat_id=category.pk).select_related("cat")
     data = {
         "title": f"Displaying category: {category.name}",
         "menu": menu,
@@ -94,7 +71,9 @@ def page_not_found(
 
 def show_tag_postlist(request: HttpRequest, tag_slug: str) -> HttpResponse:
     tag = get_object_or_404(TagPost, slug=tag_slug)
-    posts = tag.tags.filter(is_published=Women.Status.PUBLISHED)
+    posts = tag.tags.filter(
+        is_published=Women.Status.PUBLISHED
+    ).select_related("cat")
 
     data = {
         "title": f"Tag: {tag.tag}",

@@ -4,7 +4,7 @@ from django.http import (
     HttpResponseNotFound,
 )
 from django.shortcuts import render, get_object_or_404
-from women.models import Women, Category
+from women.models import Women, Category, TagPost
 
 menu = [
     {"title": "About site", "url_name": "women:about"},
@@ -90,3 +90,17 @@ def page_not_found(
     request: HttpRequest, exception: Exception
 ) -> HttpResponseNotFound:
     return HttpResponseNotFound("Page not found!!!")
+
+
+def show_tag_postlist(request: HttpRequest, tag_slug: str) -> HttpResponse:
+    tag = get_object_or_404(TagPost, slug=tag_slug)
+    posts = tag.tags.filter(is_published=Women.Status.PUBLISHED)
+
+    data = {
+        "title": f"Tag: {tag.tag}",
+        "menu": menu,
+        "posts": posts,
+        "cat_selected": 0,
+    }
+
+    return render(request, "women/index.html", context=data)

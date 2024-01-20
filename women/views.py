@@ -4,8 +4,7 @@ from django.http import (
     HttpResponseNotFound,
 )
 from django.shortcuts import render, get_object_or_404
-from women.models import Women
-
+from women.models import Women, Category
 
 menu = [
     {"title": "About site", "url_name": "women:about"},
@@ -34,21 +33,6 @@ data_db = [
         "title": "July Roberts",
         "content": "July's biography",
         "is_published": True,
-    },
-]
-
-cats_db = [
-    {
-        "id": 1,
-        "name": "actresses",
-    },
-    {
-        "id": 2,
-        "name": "singers",
-    },
-    {
-        "id": 3,
-        "name": "female athletes",
     },
 ]
 
@@ -90,12 +74,14 @@ def login(request: HttpRequest) -> HttpResponse:
     return HttpResponse("Authorization")
 
 
-def show_category(request: HttpRequest, cat_id: int) -> HttpResponse:
+def show_category(request: HttpRequest, cat_slug: str) -> HttpResponse:
+    category = get_object_or_404(Category, slug=cat_slug)
+    posts = Women.published.filter(cat_id=category.pk)
     data = {
-        "title": "Displaying categories",
+        "title": f"Displaying category: {category.name}",
         "menu": menu,
-        "posts": data_db,
-        "cat_selected": cat_id,
+        "posts": posts,
+        "cat_selected": category.pk,
     }
     return render(request, "women/index.html", context=data)
 

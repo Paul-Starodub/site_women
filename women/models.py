@@ -24,7 +24,7 @@ class Women(models.Model):
         choices=Status.choices, default=Status.DRAFT
     )
     cat = models.ForeignKey(
-        "Category", on_delete=models.PROTECT, related_name="women"
+        "Category", on_delete=models.PROTECT, related_name="posts"
     )
 
     objects = models.Manager()

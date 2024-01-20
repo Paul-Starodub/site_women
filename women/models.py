@@ -24,7 +24,7 @@ class Women(models.Model):
         choices=Status.choices, default=Status.DRAFT
     )
     cat = models.ForeignKey(
-        "Category", on_delete=models.PROTECT, related_name="women"
+        "Category", on_delete=models.PROTECT, related_name="posts"
     )
 
     objects = models.Manager()
@@ -47,3 +47,6 @@ class Category(models.Model):
 
     def __str__(self) -> str:
         return self.name
+
+    def get_absolute_url(self) -> str:
+        return reverse("women:category", kwargs={"cat_slug": self.slug})

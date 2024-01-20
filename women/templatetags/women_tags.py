@@ -1,17 +1,10 @@
-from typing import List, Any
 from django import template
-import women.views as views
-
+from women.models import Category
 
 register = template.Library()
 
 
-@register.simple_tag()
-def get_categories() -> List[Any]:
-    return views.cats_db
-
-
 @register.inclusion_tag("women/list_categories.html")
 def show_categories(cat_selected: int = 0) -> dict:
-    cats_db = views.cats_db
+    cats_db = Category.objects.all()
     return {"cats": cats_db, "cat_selected": cat_selected}

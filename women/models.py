@@ -53,10 +53,6 @@ class Women(models.Model):
     def get_absolute_url(self) -> str:
         return reverse("women:post", kwargs={"post_slug": self.slug})
 
-    def save(self, *args: tuple, **kwargs: dict) -> None:
-        self.slug = slugify(self.title)
-        super().save(*args, **kwargs)
-
 
 class Category(models.Model):
     name = models.CharField(

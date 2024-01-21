@@ -25,6 +25,9 @@ class MarriedFilter(admin.SimpleListFilter):
 
 @admin.register(Women)
 class WomenAdmin(admin.ModelAdmin):
+    fields = ("title", "content", "slug", "cat", "husband")
+    # exclude = ("tags", "is_published")  # the same
+    readonly_fields = ("slug",)
     list_display = (
         "title",
         "time_create",

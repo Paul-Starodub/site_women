@@ -1,5 +1,6 @@
 from django.db import models
 from django.db.models import QuerySet
+from django.template.defaultfilters import slugify
 from django.urls import reverse
 
 
@@ -51,6 +52,10 @@ class Women(models.Model):
 
     def get_absolute_url(self) -> str:
         return reverse("women:post", kwargs={"post_slug": self.slug})
+
+    def save(self, *args: tuple, **kwargs: dict) -> None:
+        self.slug = slugify(self.title)
+        super().save(*args, **kwargs)
 
 
 class Category(models.Model):

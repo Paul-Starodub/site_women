@@ -1,8 +1,12 @@
+import os
+
+from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.http import (
     HttpRequest,
     HttpResponse,
     HttpResponseNotFound,
 )
+from django.conf import settings
 from django.shortcuts import render, get_object_or_404, redirect
 
 from women.forms import AddPostForm
@@ -27,7 +31,23 @@ def index(request: HttpRequest) -> HttpResponse:
     return render(request, "women/index.html", context=data)
 
 
+def handle_uploaded_file(f: InMemoryUploadedFile) -> None:
+    base_dir = settings.BASE_DIR
+    upload_dir = os.path.join(base_dir, "uploads")
+
+    # Create the 'uploads' directory if it doesn't exist
+    os.makedirs(upload_dir, exist_ok=True)
+
+    file_path = os.path.join(upload_dir, f.name)
+
+    with open(file_path, "wb+") as destination:
+        for chunk in f.chunks():
+            destination.write(chunk)
+
+
 def about(request: HttpRequest) -> HttpResponse:
+    if request.method == "POST":
+        handle_uploaded_file(request.FILES["file_upload"])
     return render(
         request,
         "women/about.html",
@@ -45,11 +65,8 @@ def addpage(request: HttpRequest) -> HttpResponse:
     if request.method == "POST":
         form = AddPostForm(request.POST)
         if form.is_valid():
-            try:
-                Women.objects.create(**form.cleaned_data)
-                return redirect("women:home")
-            except:
-                form.add_error(None, "Error adding post")
+            form.save()
+            return redirect("women:home")
     else:
         form = AddPostForm()
 

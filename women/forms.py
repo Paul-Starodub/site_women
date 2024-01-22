@@ -1,33 +1,10 @@
 from django import forms
-from django.core.validators import MinLengthValidator, MaxLengthValidator
+from django.core.exceptions import ValidationError
 
-from women.models import Category, Husband
+from women.models import Category, Husband, Women
 
 
-class AddPostForm(forms.Form):
-    title = forms.CharField(
-        max_length=255,
-        min_length=5,
-        widget=forms.TextInput(attrs={"class": "form-input"}),
-        error_messages={
-            "min_length": "5 characters required",
-            "required": "Please enter title",
-        },
-    )
-    slug = forms.SlugField(
-        max_length=255,
-        label="URL",
-        validators=[
-            MinLengthValidator(5, message="MinLength must be 5"),
-            MaxLengthValidator(100),
-        ],
-    )
-    content = forms.CharField(
-        widget=forms.Textarea(attrs={"cols": 50, "rows": 5}), required=False
-    )
-    is_published = forms.BooleanField(
-        required=False, label="Status", initial=True
-    )
+class AddPostForm(forms.ModelForm):
     cat = forms.ModelChoiceField(
         queryset=Category.objects.all(),
         label="Categories",
@@ -36,3 +13,26 @@ class AddPostForm(forms.Form):
     husband = forms.ModelChoiceField(
         queryset=Husband.objects.all(), required=False, empty_label="Single"
     )
+
+    class Meta:
+        model = Women
+        fields = [
+            "title",
+            "slug",
+            "content",
+            "is_published",
+            "cat",
+            "husband",
+            "tags",
+        ]
+        widgets = {
+            "title": forms.TextInput(attrs={"class": "form-input"}),
+            "content": forms.Textarea(attrs={"cols": 50, "rows": 5}),
+        }
+        labels = {"slug": "URL"}
+
+    def clean_title(self) -> str:
+        title = self.cleaned_data["title"]
+        if len(title) > 50:
+            raise ValidationError("Title is too long")
+        return title

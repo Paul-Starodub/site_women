@@ -8,8 +8,10 @@ class AddPostForm(forms.Form):
     content = forms.CharField(widget=forms.Textarea(), required=False)
     is_published = forms.BooleanField(required=False, label="Status")
     cat = forms.ModelChoiceField(
-        queryset=Category.objects.all(), label="Categories"
+        queryset=Category.objects.all(),
+        label="Categories",
+        empty_label="Didn't choose anything",
     )
     husband = forms.ModelChoiceField(
-        queryset=Husband.objects.all(), required=False
+        queryset=Husband.objects.all(), required=False, empty_label="Single"
     )

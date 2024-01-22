@@ -5,7 +5,7 @@
 {#      `multipart/form-data` is necessary to download files#}
   <form action="" method="post" enctype="multipart/form-data">
     {% csrf_token %}
-  <p><input type="file" name="file_upload"></p>
+    {{ form.as_p }}
   <p><button type="submit">Send</button></p>
   </form>
 {% endblock %}

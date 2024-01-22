@@ -4,7 +4,13 @@ from women.models import Category, Husband
 
 class AddPostForm(forms.Form):
     title = forms.CharField(
-        max_length=255, widget=forms.TextInput(attrs={"class": "form-input"})
+        max_length=255,
+        min_length=5,
+        widget=forms.TextInput(attrs={"class": "form-input"}),
+        error_messages={
+            "min_length": "5 characters required",
+            "required": "Please enter title",
+        },
     )
     slug = forms.SlugField(max_length=255, label="URL")
     content = forms.CharField(

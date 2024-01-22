@@ -1,4 +1,6 @@
 from django import forms
+from django.core.validators import MinLengthValidator, MaxLengthValidator
+
 from women.models import Category, Husband
 
 
@@ -12,7 +14,14 @@ class AddPostForm(forms.Form):
             "required": "Please enter title",
         },
     )
-    slug = forms.SlugField(max_length=255, label="URL")
+    slug = forms.SlugField(
+        max_length=255,
+        label="URL",
+        validators=[
+            MinLengthValidator(5, message="MinLength must be 5"),
+            MaxLengthValidator(100),
+        ],
+    )
     content = forms.CharField(
         widget=forms.Textarea(attrs={"cols": 50, "rows": 5}), required=False
     )

@@ -1,4 +1,5 @@
 import os
+import uuid
 
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.http import (
@@ -9,7 +10,7 @@ from django.http import (
 from django.conf import settings
 from django.shortcuts import render, get_object_or_404, redirect
 
-from women.forms import AddPostForm
+from women.forms import AddPostForm, UploadFileForm
 from women.models import Women, Category, TagPost
 
 menu = [
@@ -38,7 +39,9 @@ def handle_uploaded_file(f: InMemoryUploadedFile) -> None:
     # Create the 'uploads' directory if it doesn't exist
     os.makedirs(upload_dir, exist_ok=True)
 
-    file_path = os.path.join(upload_dir, f.name)
+    # Generate a unique filename using uuid
+    unique_filename = str(uuid.uuid4()) + "_" + f.name
+    file_path = os.path.join(upload_dir, unique_filename)
 
     with open(file_path, "wb+") as destination:
         for chunk in f.chunks():
@@ -47,11 +50,17 @@ def handle_uploaded_file(f: InMemoryUploadedFile) -> None:
 
 def about(request: HttpRequest) -> HttpResponse:
     if request.method == "POST":
-        handle_uploaded_file(request.FILES["file_upload"])
+        form = UploadFileForm(request.POST, request.FILES)
+        if form.is_valid():
+            handle_uploaded_file(
+                f=form.cleaned_data["file"]
+            )  # because `file` is written in forms.py
+    else:
+        form = UploadFileForm()
     return render(
         request,
         "women/about.html",
-        context={"title": "About site", "menu": menu},
+        context={"title": "About site", "menu": menu, "form": form},
     )
 
 

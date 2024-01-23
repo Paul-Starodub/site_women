@@ -20,6 +20,7 @@ class AddPostForm(forms.ModelForm):
             "title",
             "slug",
             "content",
+            "photo",
             "is_published",
             "cat",
             "husband",

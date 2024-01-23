@@ -50,7 +50,7 @@ def show_post(request: HttpRequest, post_slug: str) -> HttpResponse:
 
 def addpage(request: HttpRequest) -> HttpResponse:
     if request.method == "POST":
-        form = AddPostForm(request.POST)
+        form = AddPostForm(request.POST, request.FILES)
         if form.is_valid():
             form.save()
             return redirect("women:home")

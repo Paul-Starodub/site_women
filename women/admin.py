@@ -51,6 +51,7 @@ class WomenAdmin(admin.ModelAdmin):
     actions = ["set_published", "set_unpublished"]
     search_fields = ("title__startswith", "cat__name")
     list_filter = ("cat__name", "is_published", MarriedFilter)
+    save_on_top = True
 
     @admin.display(description="Small photo", ordering="content")
     def post_photo(self, women: Women) -> str:

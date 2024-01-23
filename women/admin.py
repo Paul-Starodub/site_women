@@ -3,6 +3,7 @@ from typing import Any, Tuple, List
 from django.contrib import admin, messages
 from django.db.models import QuerySet
 from django.http import HttpRequest
+from django.utils.safestring import mark_safe
 
 from women.models import Women, Category
 
@@ -25,15 +26,23 @@ class MarriedFilter(admin.SimpleListFilter):
 
 @admin.register(Women)
 class WomenAdmin(admin.ModelAdmin):
-    fields = ("title", "content", "slug", "cat", "husband", "tags")
+    fields = (
+        "title",
+        "content",
+        "slug",
+        "photo",
+        "cat",
+        "husband",
+        "tags",
+    )
     prepopulated_fields = {"slug": ("title",)}
     filter_horizontal = ("tags",)  # filter_vertical
     list_display = (
         "title",
+        "post_photo",
         "time_create",
         "is_published",
         "cat",
-        "brief_info",
     )
     list_display_links = ("title",)
     ordering = ("-time_create", "title")
@@ -43,9 +52,11 @@ class WomenAdmin(admin.ModelAdmin):
     search_fields = ("title__startswith", "cat__name")
     list_filter = ("cat__name", "is_published", MarriedFilter)
 
-    @admin.display(description="Short description", ordering="content")
-    def brief_info(self, women: Women) -> str:
-        return f"Description {len(women.content)} symbols"
+    @admin.display(description="Small photo", ordering="content")
+    def post_photo(self, women: Women) -> str:
+        if women.photo:
+            return mark_safe(f"<img src={women.photo.url} width='50")
+        return "Without photo"
 
     @admin.action(description="Publish")
     def set_published(self, request: HttpRequest, queryset: QuerySet) -> None:

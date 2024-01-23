@@ -1,6 +1,5 @@
 from django.db import models
 from django.db.models import QuerySet
-from django.template.defaultfilters import slugify
 from django.urls import reverse
 
 

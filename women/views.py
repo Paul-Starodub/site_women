@@ -1,3 +1,4 @@
+from django.db.models import QuerySet
 from django.http import (
     HttpRequest,
     HttpResponse,
@@ -5,7 +6,7 @@ from django.http import (
 )
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views import View
-from django.views.generic import TemplateView
+from django.views.generic import ListView
 
 from women.forms import AddPostForm, UploadFileForm
 from women.models import Women, Category, TagPost, UploadedFiles
@@ -18,16 +19,17 @@ menu = [
 ]
 
 
-class WomenHome(TemplateView):
+class WomenHome(ListView):
     template_name = "women/index.html"
-
-    # doesn't work for dynamic parameters
+    context_object_name = "posts"
     extra_context = {
         "title": "women",
         "menu": menu,
-        "posts": Women.published.select_related("cat"),
         "cat_selected": 0,
     }
+
+    def get_queryset(self) -> QuerySet:
+        return Women.published.select_related("cat")
 
 
 def about(request: HttpRequest) -> HttpResponse:

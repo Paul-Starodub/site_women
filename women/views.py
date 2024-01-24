@@ -86,16 +86,35 @@ def login(request: HttpRequest) -> HttpResponse:
     return HttpResponse("Authorization")
 
 
-def show_category(request: HttpRequest, cat_slug: str) -> HttpResponse:
-    category = get_object_or_404(Category, slug=cat_slug)
-    posts = Women.published.filter(cat_id=category.pk).select_related("cat")
-    data = {
-        "title": f"Displaying category: {category.name}",
-        "menu": menu,
-        "posts": posts,
-        "cat_selected": category.pk,
-    }
-    return render(request, "women/index.html", context=data)
+# def show_category(request: HttpRequest, cat_slug: str) -> HttpResponse:
+#     category = get_object_or_404(Category, slug=cat_slug)
+#     posts = Women.published.filter(cat_id=category.pk).select_related("cat")
+#     data = {
+#         "title": f"Displaying category: {category.name}",
+#         "menu": menu,
+#         "posts": posts,
+#         "cat_selected": category.pk,
+#     }
+#     return render(request, "women/index.html", context=data)
+
+
+class WomenCategory(ListView):
+    template_name = "women/index.html"
+    context_object_name = "posts"
+    allow_empty = False
+
+    def get_queryset(self) -> QuerySet:
+        return Women.published.filter(
+            cat__slug=self.kwargs["cat_slug"]
+        ).select_related("cat")
+
+    def get_context_data(self, **kwargs) -> dict:
+        context = super().get_context_data(**kwargs)
+        cat = context["posts"][0].cat
+        context["title"] = "Category" + cat.name
+        context["menu"] = menu
+        context["cat_selected"] = cat.pk
+        return context
 
 
 def page_not_found(

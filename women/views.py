@@ -5,6 +5,7 @@ from django.http import (
 )
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views import View
+from django.views.generic import TemplateView
 
 from women.forms import AddPostForm, UploadFileForm
 from women.models import Women, Category, TagPost, UploadedFiles
@@ -26,6 +27,18 @@ def index(request: HttpRequest) -> HttpResponse:
         "cat_selected": 0,
     }
     return render(request, "women/index.html", context=data)
+
+
+class WomenHome(TemplateView):
+    template_name = "women/index.html"
+
+    # doesn't work for dynamic parameters
+    extra_context = {
+        "title": "women",
+        "menu": menu,
+        "posts": Women.published.select_related("cat"),
+        "cat_selected": 0,
+    }
 
 
 def about(request: HttpRequest) -> HttpResponse:

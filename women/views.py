@@ -4,6 +4,7 @@ from django.http import (
     HttpResponseNotFound,
 )
 from django.shortcuts import render, get_object_or_404, redirect
+from django.views import View
 
 from women.forms import AddPostForm, UploadFileForm
 from women.models import Women, Category, TagPost, UploadedFiles
@@ -48,22 +49,29 @@ def show_post(request: HttpRequest, post_slug: str) -> HttpResponse:
     return render(request, "women/post.html", context=data)
 
 
-def addpage(request: HttpRequest) -> HttpResponse:
-    if request.method == "POST":
+class AddPage(View):
+    def get(self, request: HttpRequest) -> HttpResponse:
+        form = AddPostForm()
+        data = {"menu": menu, "title": "Add an article", "form": form}
+
+        return render(
+            request,
+            "women/addpage.html",
+            context=data,
+        )
+
+    def post(self, request: HttpRequest) -> HttpResponse:
         form = AddPostForm(request.POST, request.FILES)
         if form.is_valid():
             form.save()
             return redirect("women:home")
-    else:
-        form = AddPostForm()
+        data = {"menu": menu, "title": "Add an article", "form": form}
 
-    data = {"menu": menu, "title": "Add an article", "form": form}
-
-    return render(
-        request,
-        "women/addpage.html",
-        context=data,
-    )
+        return render(
+            request,
+            "women/addpage.html",
+            context=data,
+        )
 
 
 def contact(request: HttpRequest) -> HttpResponse:

@@ -18,37 +18,16 @@ menu = [
 ]
 
 
-def index(request: HttpRequest) -> HttpResponse:
-    posts = Women.published.select_related("cat")
-    data = {
-        "title": "women",
-        "menu": menu,
-        "posts": posts,
-        "cat_selected": 0,
-    }
-    return render(request, "women/index.html", context=data)
-
-
 class WomenHome(TemplateView):
     template_name = "women/index.html"
 
     # doesn't work for dynamic parameters
-    # extra_context = {
-    #     "title": "women",
-    #     "menu": menu,
-    #     "posts": Women.published.select_related("cat"),
-    #     "cat_selected": 0,
-    # }
-
-    # works also for dynamic parameters
-
-    def get_context_data(self, **kwargs: dict):
-        context = super().get_context_data(**kwargs)
-        context["title"] = "Main page"
-        context["menu"] = menu
-        context["posts"] = Women.published.select_related("cat")
-        context["cat_selected"] = int(self.request.GET.get("cat_id", 0))
-        return context
+    extra_context = {
+        "title": "women",
+        "menu": menu,
+        "posts": Women.published.select_related("cat"),
+        "cat_selected": 0,
+    }
 
 
 def about(request: HttpRequest) -> HttpResponse:

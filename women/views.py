@@ -3,13 +3,14 @@ from django.http import (
     HttpRequest,
     HttpResponse,
     HttpResponseNotFound,
+    HttpResponseRedirect,
 )
-from django.shortcuts import render, get_object_or_404, redirect
-from django.views import View
-from django.views.generic import ListView
+from django.shortcuts import render, get_object_or_404
+from django.urls import reverse_lazy
+from django.views.generic import ListView, DetailView, FormView
 
 from women.forms import AddPostForm, UploadFileForm
-from women.models import Women, Category, TagPost, UploadedFiles
+from women.models import Women, TagPost, UploadedFiles
 
 menu = [
     {"title": "About site", "url_name": "women:about"},
@@ -47,35 +48,36 @@ def about(request: HttpRequest) -> HttpResponse:
     )
 
 
-def show_post(request: HttpRequest, post_slug: str) -> HttpResponse:
-    post = get_object_or_404(Women, slug=post_slug)
-    data = {"title": post.title, "menu": menu, "post": post, "cat_selected": 1}
-    return render(request, "women/post.html", context=data)
+class ShowPost(DetailView):
+    model = Women
+    template_name = "women/post.html"
+    slug_url_kwarg = "post_slug"
+    context_object_name = "post"
 
+    def get_context_data(self, **kwargs) -> dict:
+        context = super().get_context_data(**kwargs)
+        context["title"] = context["post"].title
+        context["menu"] = menu
+        return context
 
-class AddPage(View):
-    def get(self, request: HttpRequest) -> HttpResponse:
-        form = AddPostForm()
-        data = {"menu": menu, "title": "Add an article", "form": form}
-
-        return render(
-            request,
-            "women/addpage.html",
-            context=data,
+    def get_object(self, queryset=None) -> Women:
+        return get_object_or_404(
+            Women.published,
+            slug=self.kwargs[
+                self.slug_url_kwarg
+            ],  # use manager instead published=True
         )
 
-    def post(self, request: HttpRequest) -> HttpResponse:
-        form = AddPostForm(request.POST, request.FILES)
-        if form.is_valid():
-            form.save()
-            return redirect("women:home")
-        data = {"menu": menu, "title": "Add an article", "form": form}
 
-        return render(
-            request,
-            "women/addpage.html",
-            context=data,
-        )
+class AddPage(FormView):
+    form_class = AddPostForm
+    template_name = "women/addpage.html"
+    success_url = reverse_lazy("women:home")
+    extra_context = {"title": "Add Page", "menu": menu}
+
+    def form_valid(self, form: AddPostForm) -> HttpResponseRedirect:
+        form.save()
+        return super().form_valid(form)
 
 
 def contact(request: HttpRequest) -> HttpResponse:
@@ -84,18 +86,6 @@ def contact(request: HttpRequest) -> HttpResponse:
 
 def login(request: HttpRequest) -> HttpResponse:
     return HttpResponse("Authorization")
-
-
-# def show_category(request: HttpRequest, cat_slug: str) -> HttpResponse:
-#     category = get_object_or_404(Category, slug=cat_slug)
-#     posts = Women.published.filter(cat_id=category.pk).select_related("cat")
-#     data = {
-#         "title": f"Displaying category: {category.name}",
-#         "menu": menu,
-#         "posts": posts,
-#         "cat_selected": category.pk,
-#     }
-#     return render(request, "women/index.html", context=data)
 
 
 class WomenCategory(ListView):
@@ -123,17 +113,20 @@ def page_not_found(
     return HttpResponseNotFound("Page not found!!!")
 
 
-def show_tag_postlist(request: HttpRequest, tag_slug: str) -> HttpResponse:
-    tag = get_object_or_404(TagPost, slug=tag_slug)
-    posts = tag.tags.filter(
-        is_published=Women.Status.PUBLISHED
-    ).select_related("cat")
+class TagPostList(ListView):
+    template_name = "women/index.html"
+    context_object_name = "posts"
+    allow_empty = False
 
-    data = {
-        "title": f"Tag: {tag.tag}",
-        "menu": menu,
-        "posts": posts,
-        "cat_selected": 0,
-    }
+    def get_context_data(self, *, object_list=None, **kwargs) -> dict:
+        context = super().get_context_data(**kwargs)
+        tag = TagPost.objects.get(slug=self.kwargs["tag_slug"])
+        context["title"] = "Tag: " + tag.tag
+        context["menu"] = menu
+        context["cat_selected"] = None
+        return context
 
-    return render(request, "women/index.html", context=data)
+    def get_queryset(self) -> QuerySet:
+        return Women.published.filter(
+            tags__slug=self.kwargs["tag_slug"]
+        ).select_related("cat")

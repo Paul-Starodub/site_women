@@ -15,7 +15,7 @@ urlpatterns = [
         views.WomenCategory.as_view(),
         name="category",
     ),
-    path("tag/<slug:tag_slug>/", views.show_tag_postlist, name="tag"),
+    path("tag/<slug:tag_slug>/", views.TagPostList.as_view(), name="tag"),
 ]
 
 app_name = "women"

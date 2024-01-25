@@ -125,3 +125,22 @@ def show_tag_postlist(request: HttpRequest, tag_slug: str) -> HttpResponse:
     }
 
     return render(request, "women/index.html", context=data)
+
+
+class TagPostList(ListView):
+    template_name = "women/index.html"
+    context_object_name = "posts"
+    allow_empty = False
+
+    def get_context_data(self, *, object_list=None, **kwargs) -> dict:
+        context = super().get_context_data(**kwargs)
+        tag = TagPost.objects.get(slug=self.kwargs["tag_slug"])
+        context["title"] = "Tag: " + tag.tag
+        context["menu"] = menu
+        context["cat_selected"] = None
+        return context
+
+    def get_queryset(self) -> QuerySet:
+        return Women.published.filter(
+            tags__slug=self.kwargs["tag_slug"]
+        ).select_related("cat")

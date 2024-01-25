@@ -3,10 +3,11 @@ from django.http import (
     HttpRequest,
     HttpResponse,
     HttpResponseNotFound,
+    HttpResponseRedirect,
 )
-from django.shortcuts import render, get_object_or_404, redirect
-from django.views import View
-from django.views.generic import ListView, DetailView
+from django.shortcuts import render, get_object_or_404
+from django.urls import reverse_lazy
+from django.views.generic import ListView, DetailView, FormView
 
 from women.forms import AddPostForm, UploadFileForm
 from women.models import Women, TagPost, UploadedFiles
@@ -68,29 +69,15 @@ class ShowPost(DetailView):
         )
 
 
-class AddPage(View):
-    def get(self, request: HttpRequest) -> HttpResponse:
-        form = AddPostForm()
-        data = {"menu": menu, "title": "Add an article", "form": form}
+class AddPage(FormView):
+    form_class = AddPostForm
+    template_name = "women/addpage.html"
+    success_url = reverse_lazy("women:home")
+    extra_context = {"title": "Add Page", "menu": menu}
 
-        return render(
-            request,
-            "women/addpage.html",
-            context=data,
-        )
-
-    def post(self, request: HttpRequest) -> HttpResponse:
-        form = AddPostForm(request.POST, request.FILES)
-        if form.is_valid():
-            form.save()
-            return redirect("women:home")
-        data = {"menu": menu, "title": "Add an article", "form": form}
-
-        return render(
-            request,
-            "women/addpage.html",
-            context=data,
-        )
+    def form_valid(self, form: AddPostForm) -> HttpResponseRedirect:
+        form.save()
+        return super().form_valid(form)
 
 
 def contact(request: HttpRequest) -> HttpResponse:

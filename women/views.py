@@ -113,22 +113,6 @@ def page_not_found(
     return HttpResponseNotFound("Page not found!!!")
 
 
-def show_tag_postlist(request: HttpRequest, tag_slug: str) -> HttpResponse:
-    tag = get_object_or_404(TagPost, slug=tag_slug)
-    posts = tag.tags.filter(
-        is_published=Women.Status.PUBLISHED
-    ).select_related("cat")
-
-    data = {
-        "title": f"Tag: {tag.tag}",
-        "menu": menu,
-        "posts": posts,
-        "cat_selected": 0,
-    }
-
-    return render(request, "women/index.html", context=data)
-
-
 class TagPostList(ListView):
     template_name = "women/index.html"
     context_object_name = "posts"

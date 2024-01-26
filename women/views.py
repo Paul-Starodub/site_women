@@ -5,7 +5,8 @@ from django.http import (
     HttpResponseNotFound,
 )
 from django.shortcuts import render, get_object_or_404
-from django.views.generic import ListView, DetailView, CreateView
+from django.urls import reverse_lazy
+from django.views.generic import ListView, DetailView, CreateView, UpdateView
 
 from women.forms import AddPostForm, UploadFileForm
 from women.models import Women, TagPost, UploadedFiles
@@ -71,6 +72,14 @@ class AddPage(CreateView):
     form_class = AddPostForm
     template_name = "women/addpage.html"
     extra_context = {"title": "Add Page", "menu": menu}
+
+
+class UpdatePage(UpdateView):
+    model = Women
+    fields = ["title", "content", "photo", "is_published", "cat"]
+    template_name = "women/addpage.html"
+    success_url = reverse_lazy("women:home")
+    extra_context = {"title": "Edit Page", "menu": menu}
 
 
 def contact(request: HttpRequest) -> HttpResponse:

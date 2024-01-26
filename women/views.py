@@ -3,10 +3,8 @@ from django.http import (
     HttpRequest,
     HttpResponse,
     HttpResponseNotFound,
-    HttpResponseRedirect,
 )
 from django.shortcuts import render, get_object_or_404
-from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView, CreateView
 
 from women.forms import AddPostForm, UploadFileForm
@@ -70,16 +68,9 @@ class ShowPost(DetailView):
 
 
 class AddPage(CreateView):
-    model = Women
-    fields = "__all__"
-    # form_class = AddPostForm
+    form_class = AddPostForm
     template_name = "women/addpage.html"
-    # success_url = reverse_lazy("women:home")
     extra_context = {"title": "Add Page", "menu": menu}
-
-    # def form_valid(self, form: AddPostForm) -> HttpResponseRedirect:
-    #     form.save()
-    #     return super().form_valid(form)
 
 
 def contact(request: HttpRequest) -> HttpResponse:

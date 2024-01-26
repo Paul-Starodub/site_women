@@ -5,10 +5,13 @@ from django.http import (
     HttpResponseNotFound,
 )
 from django.shortcuts import render, get_object_or_404
-from django.views.generic import ListView, DetailView, CreateView
+from django.urls import reverse_lazy
+from django.views.generic import ListView, DetailView, CreateView, UpdateView
+from django.core.paginator import Paginator
 
 from women.forms import AddPostForm, UploadFileForm
 from women.models import Women, TagPost, UploadedFiles
+from women.utils import DataMixin
 
 menu = [
     {"title": "About site", "url_name": "women:about"},
@@ -18,35 +21,37 @@ menu = [
 ]
 
 
-class WomenHome(ListView):
+class WomenHome(DataMixin, ListView):
     template_name = "women/index.html"
     context_object_name = "posts"
-    extra_context = {
-        "title": "women",
-        "menu": menu,
-        "cat_selected": 0,
-    }
+    title_page = "women"
+    cat_selected = 0
+    paginate_by = 3
 
     def get_queryset(self) -> QuerySet:
         return Women.published.select_related("cat")
 
 
 def about(request: HttpRequest) -> HttpResponse:
-    if request.method == "POST":
-        form = UploadFileForm(request.POST, request.FILES)
-        if form.is_valid():
-            fp = UploadedFiles(file=form.cleaned_data["file"])
-            fp.save()
-    else:
-        form = UploadFileForm()
+    contact_list = Women.published.all()
+    paginator = Paginator(contact_list, 3)
+    page_number = request.GET.get("page")
+    page_obj = paginator.get_page(page_number)
+    # if request.method == "POST":
+    #     form = UploadFileForm(request.POST, request.FILES)
+    #     if form.is_valid():
+    #         fp = UploadedFiles(file=form.cleaned_data["file"])
+    #         fp.save()
+    # else:
+    #     form = UploadFileForm()
     return render(
         request,
         "women/about.html",
-        context={"title": "About site", "menu": menu, "form": form},
+        context={"title": "About site", "menu": menu, "page_obj": page_obj},
     )
 
 
-class ShowPost(DetailView):
+class ShowPost(DataMixin, DetailView):
     model = Women
     template_name = "women/post.html"
     slug_url_kwarg = "post_slug"
@@ -54,9 +59,7 @@ class ShowPost(DetailView):
 
     def get_context_data(self, **kwargs) -> dict:
         context = super().get_context_data(**kwargs)
-        context["title"] = context["post"].title
-        context["menu"] = menu
-        return context
+        return self.get_mixin_context(context, title=context["post"].title)
 
     def get_object(self, queryset=None) -> Women:
         return get_object_or_404(
@@ -67,10 +70,18 @@ class ShowPost(DetailView):
         )
 
 
-class AddPage(CreateView):
+class AddPage(DataMixin, CreateView):
     form_class = AddPostForm
     template_name = "women/addpage.html"
-    extra_context = {"title": "Add Page", "menu": menu}
+    title_page = "Adding an article"
+
+
+class UpdatePage(DataMixin, UpdateView):
+    model = Women
+    fields = ["title", "content", "photo", "is_published", "cat"]
+    template_name = "women/addpage.html"
+    success_url = reverse_lazy("women:home")
+    title_page = "Editing an article"
 
 
 def contact(request: HttpRequest) -> HttpResponse:
@@ -81,7 +92,7 @@ def login(request: HttpRequest) -> HttpResponse:
     return HttpResponse("Authorization")
 
 
-class WomenCategory(ListView):
+class WomenCategory(DataMixin, ListView):
     template_name = "women/index.html"
     context_object_name = "posts"
     allow_empty = False
@@ -94,10 +105,9 @@ class WomenCategory(ListView):
     def get_context_data(self, **kwargs) -> dict:
         context = super().get_context_data(**kwargs)
         cat = context["posts"][0].cat
-        context["title"] = "Category" + cat.name
-        context["menu"] = menu
-        context["cat_selected"] = cat.pk
-        return context
+        return self.get_mixin_context(
+            context, title="Category" + cat.name, cat_selected=cat.pk
+        )
 
 
 def page_not_found(
@@ -106,7 +116,7 @@ def page_not_found(
     return HttpResponseNotFound("Page not found!!!")
 
 
-class TagPostList(ListView):
+class TagPostList(DataMixin, ListView):
     template_name = "women/index.html"
     context_object_name = "posts"
     allow_empty = False
@@ -114,10 +124,7 @@ class TagPostList(ListView):
     def get_context_data(self, *, object_list=None, **kwargs) -> dict:
         context = super().get_context_data(**kwargs)
         tag = TagPost.objects.get(slug=self.kwargs["tag_slug"])
-        context["title"] = "Tag: " + tag.tag
-        context["menu"] = menu
-        context["cat_selected"] = None
-        return context
+        return self.get_mixin_context(context=context, title="Tag: " + tag.tag)
 
     def get_queryset(self) -> QuerySet:
         return Women.published.filter(

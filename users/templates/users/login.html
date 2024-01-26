@@ -4,6 +4,8 @@
   <h1>Authorization</h1>
   <form action="" method="post">
   {% csrf_token %}
+{#  next is more important than LOGIN_REDIRECT_URL but less important than get_absolute_url#}
+    <input type="hidden" name="next" value="{{ next }}">
       <div class="form-error">{{ form.non_field_errors }}</div>
     {% for f in form %}
       <p>

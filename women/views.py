@@ -20,14 +20,11 @@ menu = [
 ]
 
 
-class WomenHome(ListView):
+class WomenHome(DataMixin, ListView):
     template_name = "women/index.html"
     context_object_name = "posts"
-    extra_context = {
-        "title": "women",
-        "menu": menu,
-        "cat_selected": 0,
-    }
+    title_page = "women"
+    cat_selected = 0
 
     def get_queryset(self) -> QuerySet:
         return Women.published.select_related("cat")
@@ -67,18 +64,18 @@ class ShowPost(DataMixin, DetailView):
         )
 
 
-class AddPage(CreateView):
+class AddPage(DataMixin, CreateView):
     form_class = AddPostForm
     template_name = "women/addpage.html"
-    extra_context = {"title": "Add Page", "menu": menu}
+    title_page = "Adding an article"
 
 
-class UpdatePage(UpdateView):
+class UpdatePage(DataMixin, UpdateView):
     model = Women
     fields = ["title", "content", "photo", "is_published", "cat"]
     template_name = "women/addpage.html"
     success_url = reverse_lazy("women:home")
-    extra_context = {"title": "Edit Page", "menu": menu}
+    title_page = "Editing an article"
 
 
 def contact(request: HttpRequest) -> HttpResponse:
@@ -89,7 +86,7 @@ def login(request: HttpRequest) -> HttpResponse:
     return HttpResponse("Authorization")
 
 
-class WomenCategory(ListView):
+class WomenCategory(DataMixin, ListView):
     template_name = "women/index.html"
     context_object_name = "posts"
     allow_empty = False
@@ -102,10 +99,9 @@ class WomenCategory(ListView):
     def get_context_data(self, **kwargs) -> dict:
         context = super().get_context_data(**kwargs)
         cat = context["posts"][0].cat
-        context["title"] = "Category" + cat.name
-        context["menu"] = menu
-        context["cat_selected"] = cat.pk
-        return context
+        return self.get_mixin_context(
+            context, title="Category" + cat.name, cat_selected=cat.pk
+        )
 
 
 def page_not_found(
@@ -114,7 +110,7 @@ def page_not_found(
     return HttpResponseNotFound("Page not found!!!")
 
 
-class TagPostList(ListView):
+class TagPostList(DataMixin, ListView):
     template_name = "women/index.html"
     context_object_name = "posts"
     allow_empty = False
@@ -122,10 +118,7 @@ class TagPostList(ListView):
     def get_context_data(self, *, object_list=None, **kwargs) -> dict:
         context = super().get_context_data(**kwargs)
         tag = TagPost.objects.get(slug=self.kwargs["tag_slug"])
-        context["title"] = "Tag: " + tag.tag
-        context["menu"] = menu
-        context["cat_selected"] = None
-        return context
+        return self.get_mixin_context(context=context, title="Tag: " + tag.tag)
 
     def get_queryset(self) -> QuerySet:
         return Women.published.filter(

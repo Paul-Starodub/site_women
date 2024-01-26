@@ -7,6 +7,7 @@ from django.http import (
 from django.shortcuts import render, get_object_or_404
 from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView, CreateView, UpdateView
+from django.core.paginator import Paginator
 
 from women.forms import AddPostForm, UploadFileForm
 from women.models import Women, TagPost, UploadedFiles
@@ -31,17 +32,21 @@ class WomenHome(DataMixin, ListView):
 
 
 def about(request: HttpRequest) -> HttpResponse:
-    if request.method == "POST":
-        form = UploadFileForm(request.POST, request.FILES)
-        if form.is_valid():
-            fp = UploadedFiles(file=form.cleaned_data["file"])
-            fp.save()
-    else:
-        form = UploadFileForm()
+    contact_list = Women.published.all()
+    paginator = Paginator(contact_list, 3)
+    page_number = request.GET.get("page")
+    page_obj = paginator.get_page(page_number)
+    # if request.method == "POST":
+    #     form = UploadFileForm(request.POST, request.FILES)
+    #     if form.is_valid():
+    #         fp = UploadedFiles(file=form.cleaned_data["file"])
+    #         fp.save()
+    # else:
+    #     form = UploadFileForm()
     return render(
         request,
         "women/about.html",
-        context={"title": "About site", "menu": menu, "form": form},
+        context={"title": "About site", "menu": menu, "page_obj": page_obj},
     )
 
 

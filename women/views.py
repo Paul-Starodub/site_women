@@ -10,6 +10,7 @@ from django.views.generic import ListView, DetailView, CreateView, UpdateView
 
 from women.forms import AddPostForm, UploadFileForm
 from women.models import Women, TagPost, UploadedFiles
+from women.utils import DataMixin
 
 menu = [
     {"title": "About site", "url_name": "women:about"},
@@ -47,7 +48,7 @@ def about(request: HttpRequest) -> HttpResponse:
     )
 
 
-class ShowPost(DetailView):
+class ShowPost(DataMixin, DetailView):
     model = Women
     template_name = "women/post.html"
     slug_url_kwarg = "post_slug"
@@ -55,9 +56,7 @@ class ShowPost(DetailView):
 
     def get_context_data(self, **kwargs) -> dict:
         context = super().get_context_data(**kwargs)
-        context["title"] = context["post"].title
-        context["menu"] = menu
-        return context
+        return self.get_mixin_context(context, title=context["post"].title)
 
     def get_object(self, queryset=None) -> Women:
         return get_object_or_404(

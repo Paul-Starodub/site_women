@@ -21,9 +21,15 @@
 		<a href="{% url m.url_name %}">{{m.title}}</a>
   </li>
 {% endfor %}
-      <li class="last">
-        <a href="{% url 'users:login' %}">Login</a>
+      {% if user.is_authenticated %}
+            <li class="last"> {{ user.username }}
+        <a href="{% url 'users:logout' %}">Logout</a>
       </li>
+  {% else %}
+      <li class="last">
+        <a href="{% url 'users:login' %}">Login</a> | <a href="#">Sign in</a>
+      </li>
+  {% endif %}
 			</ul>
 			<div class="clear"></div>
 		</div>

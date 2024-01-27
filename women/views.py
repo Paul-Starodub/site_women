@@ -5,6 +5,7 @@ from django.http import (
     HttpRequest,
     HttpResponse,
     HttpResponseNotFound,
+    HttpResponseRedirect,
 )
 from django.shortcuts import render, get_object_or_404
 from django.urls import reverse_lazy
@@ -36,7 +37,7 @@ def about(request: HttpRequest) -> HttpResponse:
     return render(
         request,
         "women/about.html",
-        context={"title": "About site", "menu": menu, "page_obj": page_obj},
+        context={"title": "About site", "page_obj": page_obj},
     )
 
 
@@ -63,6 +64,11 @@ class AddPage(LoginRequiredMixin, DataMixin, CreateView):
     form_class = AddPostForm
     template_name = "women/addpage.html"
     title_page = "Adding an article"
+
+    def form_valid(self, form: AddPostForm) -> HttpResponseRedirect:
+        w = form.save(commit=False)
+        w.author = self.request.user
+        return super().form_valid(form)
 
 
 class UpdatePage(DataMixin, UpdateView):

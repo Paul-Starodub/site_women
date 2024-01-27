@@ -13,7 +13,7 @@ urlpatterns = [
     path("logout/", LogoutView.as_view(), name="logout"),
     path(
         "password-change/",
-        PasswordChangeView.as_view(),
+        views.UserPasswordChange.as_view(),
         name="password_change",
     ),
     path(

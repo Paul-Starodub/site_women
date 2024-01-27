@@ -1,3 +1,4 @@
+from django.contrib.auth import get_user_model
 from django.db import models
 from django.db.models import QuerySet
 from django.urls import reverse
@@ -42,6 +43,13 @@ class Women(models.Model):
         null=True,
         blank=True,
         related_name="woman",
+    )
+    author = models.ForeignKey(
+        get_user_model(),
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name="posts",
+        default=None,
     )
 
     objects = models.Manager()

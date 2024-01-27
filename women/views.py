@@ -33,7 +33,7 @@ class WomenHome(DataMixin, ListView):
         return Women.published.select_related("cat")
 
 
-@login_required(login_url="/admin/")
+@login_required()
 def about(request: HttpRequest) -> HttpResponse:
     contact_list = Women.published.all()
     paginator = Paginator(contact_list, 3)

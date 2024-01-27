@@ -15,13 +15,6 @@ from women.forms import AddPostForm
 from women.models import Women, TagPost
 from women.utils import DataMixin
 
-menu = [
-    {"title": "About site", "url_name": "women:about"},
-    {"title": "Add an article", "url_name": "women:add_page"},
-    {"title": "Feedback", "url_name": "women:contact"},
-    {"title": "Enter", "url_name": "women:login"},
-]
-
 
 class WomenHome(DataMixin, ListView):
     template_name = "women/index.html"
@@ -70,7 +63,6 @@ class AddPage(LoginRequiredMixin, DataMixin, CreateView):
     form_class = AddPostForm
     template_name = "women/addpage.html"
     title_page = "Adding an article"
-    login_url = "/admin/"
 
 
 class UpdatePage(DataMixin, UpdateView):

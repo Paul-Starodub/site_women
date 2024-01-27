@@ -142,8 +142,10 @@ MEDIA_URL = "/media/"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-# you can use it instead get_success_url
-# LOGIN_REDIRECT_URL = reverse_lazy("women:home")
-
 LOGOUT_REDIRECT_URL = "women:home"
-LOGIN_URL = "users:login"  # works also without reverse_lazy
+LOGIN_URL = "users:login"
+
+AUTHENTICATION_BACKENDS = [
+    "django.contrib.auth.backends.ModelBackend",
+    "users.authentication.EmailAuthBackend",
+]

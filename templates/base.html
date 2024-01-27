@@ -24,7 +24,8 @@
       {% if user.is_authenticated %}
   <form method="post" action="{% url 'users:logout' %}">
    {% csrf_token %}
-   <li class="last">{{ user.username }} |
+   <li class="last"><a href="{% url 'users:profile' %}">{{ user.username }}</a> |
+{#   <li class="last">{{ user.username }} |#}
        <button type="submit">Logout</button>
    </li>
   </form>

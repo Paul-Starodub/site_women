@@ -1,0 +1,7 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h1>Welcome</h1>
+  <p>You have registered on the site! Authorization is required to log in</p>
+  <a href="{% url 'users:login' %}">Link</a>
+{% endblock %}

@@ -1,4 +1,5 @@
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import QuerySet
 from django.http import (
     HttpRequest,
@@ -65,10 +66,11 @@ class ShowPost(DataMixin, DetailView):
         )
 
 
-class AddPage(DataMixin, CreateView):
+class AddPage(LoginRequiredMixin, DataMixin, CreateView):
     form_class = AddPostForm
     template_name = "women/addpage.html"
     title_page = "Adding an article"
+    login_url = "/admin/"
 
 
 class UpdatePage(DataMixin, UpdateView):

@@ -3,8 +3,13 @@
 {% block content %}
 	<h1>Profile</h1>
 
-  <form action="" method="post">
+  <form action="" method="post" enctype="multipart/form-data">
     {% csrf_token %}
+    {% if user.photo %}
+    	<p><img src="{{ user.photo.url }}" alt="photo"></p>
+    {% else %}
+      <p><img src="{{default_image}}" alt="photo"></p>
+    {% endif %} 
     <div class="form-error">{{ form.non_field_errors }}</div>
     {% for f in form %}
       <p>

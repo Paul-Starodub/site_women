@@ -91,6 +91,10 @@ def contact(request: HttpRequest) -> HttpResponse:
     return HttpResponse("Feedback")
 
 
+def login(request: HttpRequest) -> HttpResponse:
+    return HttpResponse("Authorization")
+
+
 class WomenCategory(DataMixin, ListView):
     template_name = "women/index.html"
     context_object_name = "posts"
